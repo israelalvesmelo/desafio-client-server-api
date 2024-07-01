@@ -6,10 +6,12 @@ WORKDIR /app
 # Copiar os arquivos go.mod e go.sum e baixar as dependências
 COPY go.mod .
 COPY go.sum .
-RUN go mod download
 
 # Copiar o código fonte
 COPY server .
+
+RUN go mod tidy
+
 
 # Compilar o aplicativo
 RUN go build -o main .
