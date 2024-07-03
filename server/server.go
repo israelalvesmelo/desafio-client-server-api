@@ -20,11 +20,11 @@ var DB *gorm.DB
 
 func main() {
 	setupDataBase()
-	http.HandleFunc("/cotacao", GetCotacaoHandle)
+	http.HandleFunc("/cotacao", CotacaoHandler)
 	http.ListenAndServe(":8080", nil)
 }
 
-func GetCotacaoHandle(w http.ResponseWriter, r *http.Request) {
+func CotacaoHandler(w http.ResponseWriter, r *http.Request) {
 
 	cotacao, error := GetCotacao()
 	if error != nil {
@@ -43,7 +43,7 @@ func GetCotacaoHandle(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	json.NewEncoder(w).Encode(cotacao.USDBRL.Bid)
+	json.NewEncoder(w).Encode(cotacao.Bid)
 }
 
 func GetCotacao() (*dto.CotacaoDto, error) {
@@ -74,14 +74,13 @@ func GetCotacao() (*dto.CotacaoDto, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	var c dto.CotacaoDto
+	var c map[string]dto.CotacaoDto
 	err = json.Unmarshal(body, &c)
 	if err != nil {
 		return nil, err
 	}
-
-	return &c, nil
+	cotacao := c["USDBRL"]
+	return &cotacao, nil
 }
 
 func SaveCotacao(c *dto.CotacaoDto) error {
@@ -92,7 +91,7 @@ func SaveCotacao(c *dto.CotacaoDto) error {
 }
 
 func setupDataBase() {
-	db, err := gorm.Open(sqlite.Open("data/desafio.db"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("cotacao.db"), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}

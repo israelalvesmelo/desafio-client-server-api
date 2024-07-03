@@ -26,17 +26,17 @@ func SaveCotacao(db *gorm.DB, dto *dto.CotacaoDto) error {
 	}()
 
 	tx := db.WithContext(ctx).Create(model.Cotacao{
-		Code:       dto.USDBRL.Code,
-		Codein:     dto.USDBRL.Codein,
-		Name:       dto.USDBRL.Name,
-		High:       dto.USDBRL.High,
-		Low:        dto.USDBRL.Low,
-		VarBid:     dto.USDBRL.VarBid,
-		PctChange:  dto.USDBRL.PctChange,
-		Bid:        dto.USDBRL.Bid,
-		Ask:        dto.USDBRL.Ask,
-		Timestamp:  dto.USDBRL.Timestamp,
-		CreateDate: dto.USDBRL.CreateDate,
+		Code:       dto.Code,
+		Codein:     dto.Codein,
+		Name:       dto.Name,
+		High:       dto.High,
+		Low:        dto.Low,
+		VarBid:     dto.VarBid,
+		PctChange:  dto.PctChange,
+		Bid:        dto.Bid,
+		Ask:        dto.Ask,
+		Timestamp:  dto.Timestamp,
+		CreateDate: dto.CreateDate,
 	})
 
 	if tx.Error != nil {
