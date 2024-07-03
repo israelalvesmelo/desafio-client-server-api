@@ -10,7 +10,7 @@ Para executar o server basta acessar a pasta server em um terminal (~/desafio-cl
 
 A execução fará com que o servidor esteja funcionando em http://localhost:8080/.
 
-Para executar o server basta acessar a pasta server em um terminal (~/desafio-client-server-api/client) e executar o comando:
+Para executar o client basta acessar a pasta client em um terminal (~/desafio-client-server-api/client) e executar o comando:
 
 `go run client.go`
 
