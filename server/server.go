@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -10,13 +11,10 @@ import (
 	"time"
 
 	"github.com/israelalvesmelo/desafio-client-server-api/server/dto"
-	"github.com/israelalvesmelo/desafio-client-server-api/server/model"
 	"github.com/israelalvesmelo/desafio-client-server-api/server/repository"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 )
 
-var DB *gorm.DB
+var DB *sql.DB
 
 func main() {
 	setupDataBase()
@@ -47,6 +45,7 @@ func CotacaoHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetCotacao() (*dto.CotacaoDto, error) {
+	log.Println("Iniciando requisição para cotacao")
 	ctx, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
 	defer cancel()
 
@@ -91,10 +90,9 @@ func SaveCotacao(c *dto.CotacaoDto) error {
 }
 
 func setupDataBase() {
-	db, err := gorm.Open(sqlite.Open("cotacao.db"), &gorm.Config{})
+	db, err := sql.Open("sqlite3", "cotacao.db")
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&model.Cotacao{})
 	DB = db
 }

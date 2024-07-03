@@ -2,16 +2,17 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"log"
 	"time"
 
 	"github.com/israelalvesmelo/desafio-client-server-api/server/dto"
-	"github.com/israelalvesmelo/desafio-client-server-api/server/model"
-	"gorm.io/gorm"
+	_ "github.com/mattn/go-sqlite3"
 )
 
-func SaveCotacao(db *gorm.DB, dto *dto.CotacaoDto) error {
+func SaveCotacao(db *sql.DB, c *dto.CotacaoDto) error {
+	log.Println("Salvando cotacao")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
 	defer cancel()
@@ -25,23 +26,54 @@ func SaveCotacao(db *gorm.DB, dto *dto.CotacaoDto) error {
 		}
 	}()
 
-	tx := db.WithContext(ctx).Create(model.Cotacao{
-		Code:       dto.Code,
-		Codein:     dto.Codein,
-		Name:       dto.Name,
-		High:       dto.High,
-		Low:        dto.Low,
-		VarBid:     dto.VarBid,
-		PctChange:  dto.PctChange,
-		Bid:        dto.Bid,
-		Ask:        dto.Ask,
-		Timestamp:  dto.Timestamp,
-		CreateDate: dto.CreateDate,
-	})
+	q := `
+		INSERT INTO
+			cotacoes(
+				code,
+				codein,
+				name,
+				high,
+				low,
+				varbid,
+				pctchange,
+				bid,
+				ask,
+				timestamp,
+				create_date
+			)
+			VALUES (
+				?, 
+				?, 
+				?, 
+				?, 
+				?, 
+				?, 
+				?, 
+				?, 
+				?, 
+				?, 
+				?
+			);
+	`
 
-	if tx.Error != nil {
-		return fmt.Errorf("failed to save cotacao: %v", tx.Error)
+	id, err := db.ExecContext(ctx, q,
+		c.Code,
+		c.Codein,
+		c.Name,
+		c.High,
+		c.Low,
+		c.VarBid,
+		c.PctChange,
+		c.Bid,
+		c.Ask,
+		c.Timestamp,
+		c.CreateDate,
+	)
+
+	if err != nil {
+		return fmt.Errorf("failed to save cotacao: %v", err)
 	}
+	log.Printf("ID inserido: %d", &id)
 
 	return nil
 }
