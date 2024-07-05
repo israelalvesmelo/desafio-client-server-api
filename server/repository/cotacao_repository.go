@@ -26,7 +26,7 @@ func SaveCotacao(db *sql.DB, c *dto.CotacaoDto) error {
 		}
 	}()
 
-	q := `
+	query := `
 		INSERT INTO
 			cotacoes(
 				code,
@@ -55,8 +55,13 @@ func SaveCotacao(db *sql.DB, c *dto.CotacaoDto) error {
 				?
 			);
 	`
+	stmt, err := db.PrepareContext(ctx, query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
 
-	id, err := db.ExecContext(ctx, q,
+	id, err := stmt.ExecContext(ctx,
 		c.Code,
 		c.Codein,
 		c.Name,
@@ -77,3 +82,16 @@ func SaveCotacao(db *sql.DB, c *dto.CotacaoDto) error {
 
 	return nil
 }
+
+// func insertProduct(db *sql.DB, p *Product) error {
+// 	stmt, err := db.Prepare("INSERT INTO products (id, name, price) VALUES (?,?,?)")
+// 	if err != nil {
+// 		return err
+// 	}
+// 	defer stmt.Close()
+// 	_, err = stmt.Exec(p.ID, p.Name, p.Price)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }

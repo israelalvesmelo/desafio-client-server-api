@@ -84,15 +84,36 @@ func GetCotacao() (*dto.CotacaoDto, error) {
 
 func SaveCotacao(c *dto.CotacaoDto) error {
 	if DB == nil {
-		return fmt.Errorf("Database connection is not initialized")
+		return fmt.Errorf("database connection is not initialized")
 	}
 	return repository.SaveCotacao(DB, c)
 }
 
 func setupDataBase() {
-	db, err := sql.Open("sqlite3", "cotacao.db")
+	db, err := sql.Open("sqlite3", "desafio.db")
 	if err != nil {
 		panic(err)
 	}
+
+	createTableSQL := `CREATE TABLE IF NOT EXISTS cotacoes (
+        "id" TEXT,
+        "code" TEXT,
+        "codein" TEXT,
+        "name" TEXT,
+        "high" TEXT,
+        "low" TEXT,
+        "varbid" TEXT,
+        "pctChange" TEXT,
+        "bid" TEXT,
+        "ask" TEXT,
+        "timestamp" TEXT,
+        "create_date" TEXT
+    );`
+
+	_, err = db.Exec(createTableSQL)
+	if err != nil {
+		panic(err)
+	}
+
 	DB = db
 }
